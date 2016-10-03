@@ -1,32 +1,32 @@
-def traverse(edge, bases):
-    if not (edge[0] in bases):
+def traverse(edge, bases, handled):
+    if not (edge[0] in bases or edge[0] in handled):
         return edge[0]
-    elif not (edge[1] in bases):
+    elif not (edge[1] in bases or edge[1] in handled):
         return edge[1]
     else:
         return 0
 
-def address_adjacent(steps, edges, nodes, bases, length):
-    if edges == [] or nodes == []:
-        return steps  
-    adjacent_edges = [edge for edge in edges if (edge[0] in bases or edge[1] in bases)]
-    for edge in adjacent_edges:
-        edges.remove(edge)
-    adjacent_nodes = filter(None, [traverse(edge, bases) for edge in adjacent_edges])
-    for node in adjacent_nodes:
-        try:
+def address_adjacent(steps, edges, nodes, initial, length):
+    handled = []
+    bases = [initial]
+    while not(edges == [] or nodes == []):
+        adjacent_edges = [edge for edge in edges if (edge[0] in bases or edge[1] in bases)]
+        for edge in adjacent_edges:
+            edges.remove(edge)
+        adjacent_nodes = filter(None, [traverse(edge, bases, handled) for edge in adjacent_edges])
+        for node in adjacent_nodes:
             nodes.remove(node)
-        except ValueError:
-            print node
-        steps[node-1] = length
-    return address_adjacent(steps, adjacent_edges, nodes, adjacent_nodes, length + 6)
+            steps[node-1] = length
+        handled = handled + bases
+        bases = adjacent_nodes
+        length += 6
+    return steps
 
 def print_nodes(n, m, edges, s):
     steps = [-1] * n
     nodes = range(1, n+1)
     nodes.pop(s-1)
-    bases = [s]
-    steps = address_adjacent(steps, edges, nodes, bases, 6)
+    steps = address_adjacent(steps, edges, nodes, s, 6)
     steps.pop(s-1)
     print ' '.join(map(str, steps))
 
