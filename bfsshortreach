@@ -8,7 +8,7 @@ def traverse(edge, curr, handled):
     else:
         return 0
 
-def address_adjacent(steps, edges, nodes, initial, length):
+def address_adjacent(steps, edges, initial, length):
     handled = []
     nodes_to_visit = Queue.Queue()
     nodes_to_visit.put(initial)
@@ -23,13 +23,10 @@ def address_adjacent(steps, edges, nodes, initial, length):
             edges.remove(edge)
         handled.append(curr)
         length += 6
-    return steps
 
 def print_nodes(n, m, edges, s):
     steps = [-1] * n
-    nodes = range(1, n+1)
-    nodes.pop(s-1)
-    steps = address_adjacent(steps, edges, nodes, s, 6)
+    address_adjacent(steps, edges, s, 6)
     steps.pop(s-1)
     print ' '.join(map(str, steps))
 
